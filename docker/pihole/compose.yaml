@@ -1,0 +1,41 @@
+version: "3.3"
+
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    restart: unless-stopped
+    hostname: pihole
+    domainname: home
+    cap_add:
+      - NET_ADMIN
+    networks:
+      br0:
+        ipv4_address: 192.168.0.2
+    dns:
+      - 127.0.0.1
+      - 8.8.8.8
+    ports:
+      - 443/tcp
+      - 53/tcp
+      - 53/udp
+      - 67/udp
+      - 80/tcp
+    volumes:
+      - '/mnt/zfs/appdata/pihole/etc:/etc/pihole'
+      - '/mnt/zfs/appdata/pihole/dnsmasq.d:/etc/dnsmasq.d'
+    environment:
+      TZ: 'Europe/Berlin'
+      WEBPASSWORD: "${WEBPASSWORD}"
+      WEBTHEME: default-dark
+      DHCP_ACTIVE: true
+      DHCP_ROUTER: 192.168.0.1
+      DHCP_START: 192.168.0.17
+      DHCP_END: 192.168.0.255
+      PIHOLE_DOMAIN: home
+      FTLCONF_LOCAL_IPV4: 192.168.0.2
+      VIRTUAL_HOST: pihole.home
+
+networks:
+  br0:
+    external: true
