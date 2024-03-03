@@ -1,0 +1,40 @@
+- name: Update packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Install essential packages
+  package:
+    name:
+    - build-essential
+    - gcc
+    - ninja-build
+    - gettext
+    - cmake
+    - zlib1g
+    - zlib1g-dev
+    - libssl-dev
+    - libbz2-dev
+    - libsqlite3-dev
+    - unzip
+    - curl
+    - git
+    - neofetch
+    - htop
+    - tmux
+    - stow
+    state: latest
+
+- name: Disable SSH password auth
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#PasswordAuthentication yes"
+    line: "PasswordAuthentication no"
+  register: sshd_config
+
+- name: Enable passwordless sudo for "{{ ansible_user }}"
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: "^%wheel"
+    line: "{{ ansible_user }} ALL=(ALL) NOPASSWD: ALL"
+    validate: "/usr/sbin/visudo -cf %s"
