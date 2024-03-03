@@ -11,7 +11,7 @@ security best practices have not necessarily been observed.
 I host my workloads on Unraid with containers being managed by Portainer. Portainer is the
 only container that is not deployed by compose.
 
-The first 16 IP addresses of the 192.168.0.1/24 range are reserved for
+The first 16 IP addresses of the 192.168.0.0/24 range are reserved for
 containers running in host mode and virtual machines. Notable among them are:
 
 * the internet router on 192.168.0.1.
