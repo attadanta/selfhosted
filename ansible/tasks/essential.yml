@@ -23,6 +23,7 @@
     - htop
     - tmux
     - stow
+    - zsh
     state: latest
 
 - name: Disable SSH password auth
