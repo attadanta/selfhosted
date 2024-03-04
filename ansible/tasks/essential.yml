@@ -3,7 +3,7 @@
     update_cache: yes
     upgrade: yes
 
-- name: Install essential packages
+- name: Install system packages
   package:
     name:
     - build-essential
