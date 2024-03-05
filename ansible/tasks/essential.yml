@@ -26,6 +26,9 @@
     - tmux
     - stow
     - zsh
+    - ripgrep
+    - fzf
+    - jq
     state: latest
 
 - name: Disable SSH password auth
