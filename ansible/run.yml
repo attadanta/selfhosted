@@ -1,7 +1,0 @@
----
-- name: Deploy system essentials
-  hosts: all
-  become: yes
-
-  tasks:
-    - import_tasks: tasks/essential.yml
