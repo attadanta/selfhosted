@@ -4,12 +4,12 @@
   apt:
     update_cache: yes
     upgrade: yes
-
 - name: Install system packages
   tags:
   - essential
   package:
     name:
+    - sudo
     - build-essential
     - gcc
     - ninja-build
@@ -44,13 +44,13 @@
     line: "PasswordAuthentication no"
   register: sshd_config
 
-- name: Enable passwordless sudo for "{{ ansible_user }}"
+- name: Enable passwordless sudo for "{{ username }}"
   tags:
   - essential
   lineinfile:
     dest: /etc/sudoers
     regexp: "^%wheel"
-    line: "{{ ansible_user }} ALL=(ALL) NOPASSWD: ALL"
+    line: "{{ username }} ALL=(ALL) NOPASSWD: ALL"
     validate: "/usr/sbin/visudo -cf %s"
 
 - name: Add the docker repository
@@ -85,9 +85,33 @@
     echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
     echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
     echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+  become: true
+  become_method: sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
 
 - name: Install fnm
   tags:
   - personal
   ansible.builtin.shell: |
     curl -fsSL https://fnm.vercel.app/install | bash
+    eval "$(fnm env --use-on-cd)" >> ~/.bashrc
+  args:
+    executable: /bin/bash
+  become: true
+  become_method: sudo
+  become_user: "{{ username }}"
+  become_flags: '-u'
+
+- name: Install node
+  tags:
+  - personal
+  ansible.builtin.shell: |
+    cat .bashrc && .bashrc && fnm install --lts
+  args:
+    executable: /bin/bash
+    chdir: /home/{{ username }}
+  become: true
+  become_method: sudo
+  become_user: "{{ username }}"
+  become_flags: '-u'
