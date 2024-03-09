@@ -1,9 +1,22 @@
-- name: Update packages
+- name: Update package list
   tags:
   - essential
   apt:
     update_cache: yes
     upgrade: yes
+
+- name: Add the docker repository
+  tags:
+  - essential
+  ansible.builtin.shell: |
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    chmod a+r /etc/apt/keyrings/docker.asc
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      tee /etc/apt/sources.list.d/docker.list > /dev/null
+
 - name: Install system packages
   tags:
   - essential
@@ -33,6 +46,7 @@
     - ripgrep
     - fzf
     - jq
+    - docker
     state: latest
 
 - name: Disable SSH password auth
@@ -53,30 +67,6 @@
     line: "{{ username }} ALL=(ALL) NOPASSWD: ALL"
     validate: "/usr/sbin/visudo -cf %s"
 
-- name: Add the docker repository
-  tags:
-  - essential
-  ansible.builtin.shell: |
-    install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-    chmod a+r /etc/apt/keyrings/docker.asc
-    echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-      tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-- name: Update package list
-  tags:
-  - essential
-  apt:
-    update_cache: yes
-
-- name: Install docker
-  tags:
-  - essential
-  package:
-    name: docker
-
 - name: Change shell to zsh
   tags:
   - personal
@@ -87,7 +77,8 @@
   tags:
   - personal
   ansible.builtin.shell: |
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    mv ~/.zshrc ~/.zshrc.orig
   become: true
   become_method: sudo
   become_user: "{{ username }}"
@@ -97,6 +88,18 @@
   ansible.builtin.git:
     repo: 'https://github.com/zsh-users/zsh-autosuggestions.git'
     dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+  become: true
+  become_method: sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+
+- name: Create the source directory
+  tags:
+  - personal
+  ansible.builtin.file:
+    path: /home/{{ username }}/source
+    state: directory
+    mode: 0755
   become: true
   become_method: sudo
   become_user: "{{ username }}"
@@ -116,6 +119,42 @@
     stow --adopt .
   args:
     chdir: /home/{{ username }}/.dotfiles
+  become: true
+  become_method: sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+
+- name: Clone neovim
+  tags:
+  - personal
+  ansible.builtin.git:
+    repo: 'https://github.com/neovim/neovim.git'
+    dest: /home/{{ username }}/source/neovim
+  become: true
+  become_method: sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+
+- name: Build neovim
+  tags:
+  - personal
+  ansible.builtin.shell: |
+    git checkout stable
+    make CMAKE_BUILD_TYPE=Release
+  args:
+    chdir: /home/{{ username }}/source/neovim
+  become: true
+  become_method: sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+
+- name: Install neovim
+  tags:
+  - personal
+  ansible.builtin.shell: |
+    sudo make install
+  args:
+    chdir: /home/{{ username }}/source/neovim
   become: true
   become_method: sudo
   become_user: "{{ username }}"
