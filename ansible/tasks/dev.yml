@@ -80,7 +80,7 @@
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
     mv ~/.zshrc ~/.zshrc.orig
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
 
@@ -89,7 +89,7 @@
     repo: 'https://github.com/zsh-users/zsh-autosuggestions.git'
     dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
 
@@ -101,7 +101,7 @@
     state: directory
     mode: 0755
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
 
@@ -110,7 +110,7 @@
     repo: 'https://github.com/attadanta/dotfiles.git'
     dest: ~/.dotfiles
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
 
@@ -120,7 +120,7 @@
   args:
     chdir: /home/{{ username }}/.dotfiles
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
 
@@ -131,7 +131,7 @@
     repo: 'https://github.com/neovim/neovim.git'
     dest: /home/{{ username }}/source/neovim
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
 
@@ -144,7 +144,7 @@
   args:
     chdir: /home/{{ username }}/source/neovim
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
 
@@ -156,7 +156,7 @@
   args:
     chdir: /home/{{ username }}/source/neovim
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
 
@@ -166,7 +166,7 @@
   ansible.builtin.shell: |
     curl https://pyenv.run | bash
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
 
@@ -178,7 +178,7 @@
   args:
     executable: /bin/bash
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
 
@@ -192,7 +192,6 @@
     executable: /bin/bash
     chdir: /home/{{ username }}
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
-
