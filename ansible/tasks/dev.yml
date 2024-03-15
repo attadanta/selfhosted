@@ -99,7 +99,6 @@
   ansible.builtin.file:
     path: /home/{{ username }}/source
     state: directory
-    mode: 0755
   become: true
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
@@ -175,8 +174,6 @@
   - personal
   ansible.builtin.shell: |
     curl -fsSL https://fnm.vercel.app/install | bash
-  args:
-    executable: /bin/bash
   become: true
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
@@ -188,9 +185,6 @@
   ansible.builtin.shell: |
     source .zshrc
     fnm install --lts
-  args:
-    executable: /bin/bash
-    chdir: /home/{{ username }}
   become: true
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
