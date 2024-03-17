@@ -1,7 +1,7 @@
 ---
 - name: Set up development environment
   hosts: all
-  become: yes
+  become: true
 
   tasks:
     - import_tasks: tasks/dev.yml
