@@ -4,7 +4,8 @@
   become: true
 
   tasks:
-    - import_tasks: tasks/dev.yml
+    - name: Run tasks
+      import_tasks: tasks/dev.yml
       tags:
         - essential
         - personal
