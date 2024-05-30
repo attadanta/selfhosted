@@ -10,7 +10,7 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - /mnt/zfs/appdata/syncthing:/config
-      - /mnt/zfs/synchthing:/data
+      - /mnt/zfs/syncthing:/data
     ports:
       - 8384:8384
       - 22000:22000/tcp
