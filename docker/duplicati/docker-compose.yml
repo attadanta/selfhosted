@@ -7,6 +7,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Berlin
+      - DUPLICATI__WEBSERVICE_PASSWORD=${WEBSERVICE_PASSWORD}
+      - SETTINGS_ENCRYPTION_KEY=${SETTINGS_ENCRYPTION_KEY}
     volumes:
       - /mnt/zfs/appdata/duplicati:/config
       - /mnt/zfs/appdata/duplicati-backups:/backups
