@@ -11,6 +11,7 @@ services:
       - TZ=Europe/Berlin
       - VERSION=docker
       - PLEX_CLAIM="${PLEX_CLAIM}"
+      - ADVERTISE_IP="${ADVERTISE_IP}"
     volumes:
       - /mnt/zfs/appdata/plex:/config
       - /mnt/zfs/scrbl/movies:/movies
