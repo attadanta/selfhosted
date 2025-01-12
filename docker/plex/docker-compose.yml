@@ -16,5 +16,4 @@ services:
       - /mnt/zfs/appdata/plex:/config
       - /mnt/zfs/scrbl/movies:/movies
       - /mnt/zfs/scrbl/series:/tv
-      - /mnt/zfs/scrbl/anime:/anime
       - /mnt/zfs/scrbl/screencasts:/screencasts
