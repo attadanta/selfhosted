@@ -42,11 +42,11 @@ services:
       - /mnt/zfs/datarr/torrents:/downloads
     depends_on:
       - gluetun
-    restart: always
 
   jackett:
     image: lscr.io/linuxserver/jackett:latest
     container_name: jackett
+    restart: unless-stopped
     network_mode: "service:gluetun"
     environment:
       - PUID=1000
@@ -59,8 +59,8 @@ services:
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
-    restart: unless-stopped
     container_name: prowlarr
+    restart: unless-stopped
     network_mode: "service:gluetun"
     environment:
       - PUID=1000
