@@ -37,13 +37,13 @@ services:
     network_mode: "service:gluetun"
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=100
       - UMASK=002
       - TZ=${TZ}
       - WEBUI_PORTS="8085"
     volumes:
       - /mnt/zfs/appdata/qbittorrent:/config
-      - /mnt/zfs/data/torrents:/data
+      - /mnt/zfs/data:/data
 
   overseerr:
     image: ghcr.io/hotio/overseerr:latest
@@ -52,7 +52,7 @@ services:
     network_mode: "service:gluetun"
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=100
       - UMASK=002
       - TZ=${TZ}
     volumes:
@@ -65,7 +65,7 @@ services:
     network_mode: "service:gluetun"
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=100
       - TZ=${TZ}
     volumes:
       - /mnt/zfs/appdata/prowlarr:/config
@@ -76,13 +76,13 @@ services:
     network_mode: "service:gluetun"
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=100
       - UMASK=002
       - TZ=${TZ}
       - WEBUI_PORTS=6767/tcp,6767/udp
     volumes:
       - /mnt/zfs/appdata/bazarr:/config
-      - /mnt/zfs/data/media/subtitles:/data
+      - /mnt/zfs/data/media:/data/media
 
   lidarr:
     image: ghcr.io/hotio/lidarr:latest
@@ -91,12 +91,12 @@ services:
     network_mode: "service:gluetun"
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=100
       - UMASK=002
       - TZ=${TZ}
     volumes:
       - /mnt/zfs/appdata/lidarr:/config
-      - /mnt/zfs/data/media/music:/data
+      - /mnt/zfs/data:/data
 
   readarr:
     image: ghcr.io/hotio/readarr:latest
@@ -105,9 +105,9 @@ services:
     network_mode: "service:gluetun"
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=100
       - UMASK=002
       - TZ=${TZ}
     volumes:
       - /mnt/zfs/appdata/readarr:/config
-      - /mnt/zfs/data/media/books:/data
+      - /mnt/zfs/data:/data
