@@ -44,8 +44,6 @@ services:
     volumes:
       - /mnt/zfs/appdata/qbittorrent:/config
       - /mnt/zfs/data/torrents:/data
-    depends_on:
-      - gluetun
 
   overseerr:
     image: ghcr.io/hotio/overseerr:latest
@@ -59,8 +57,6 @@ services:
       - TZ=${TZ}
     volumes:
       - /mnt/zfs/appdata/overseerr:/config
-    depends_on:
-      - gluetun
 
   prowlarr:
     image: ghcr.io/hotio/prowlarr:latest
@@ -73,8 +69,6 @@ services:
       - TZ=${TZ}
     volumes:
       - /mnt/zfs/appdata/prowlarr:/config
-    depends_on:
-      - gluetun
 
   bazarr:
     container_name: bazarr
@@ -89,8 +83,6 @@ services:
     volumes:
       - /mnt/zfs/appdata/bazarr:/config
       - /mnt/zfs/data/media/subtitles:/data
-    depends_on:
-      - gluetun
 
   lidarr:
     image: ghcr.io/hotio/lidarr:latest
@@ -105,8 +97,6 @@ services:
     volumes:
       - /mnt/zfs/appdata/lidarr:/config
       - /mnt/zfs/data/media/music:/data
-    depends_on:
-      - gluetun
 
   readarr:
     image: ghcr.io/hotio/readarr:latest
@@ -121,5 +111,3 @@ services:
     volumes:
       - /mnt/zfs/appdata/readarr:/config
       - /mnt/zfs/data/media/books:/data
-    depends_on:
-      - gluetun
