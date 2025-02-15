@@ -40,7 +40,7 @@ services:
       - PGID=1000
       - UMASK=002
       - TZ=${TZ}
-      - WEBUI_PORTS="8085/tcp,8085/udp"
+      - WEBUI_PORTS="8085"
     volumes:
       - /mnt/zfs/appdata/qbittorrent:/config
       - /mnt/zfs/data/torrents:/data
