@@ -109,7 +109,7 @@ services:
       - gluetun
 
   readarr:
-    image: ghcr.io/hotio/readarr:readarr-1.33.2
+    image: ghcr.io/hotio/readarr:release-1.33.2
     container_name: readarr
     restart: unless-stopped
     network_mode: "service:gluetun"
