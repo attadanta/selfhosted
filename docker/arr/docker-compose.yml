@@ -12,8 +12,11 @@ services:
       - 6881:6881
       - 6881:6881/udp
       - 8085:8085 # qbittorrent
-      - 9117:9117 # Jackett
+      - 5005:5005 # Overseerr
       - 9696:9696 # Prowlarr
+      - 8686:8686 # Lidarr
+      - 8787:8787 # Readarr
+      - 6767:6767 # Bazarr
     volumes:
       - /mnt/zfs/appdata/gluetun:/gluetun
     environment:
@@ -28,37 +31,39 @@ services:
       - UPDATER_PERIOD=24h
 
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent
+    image: ghcr.io/hotio/qbittorrent:release-5.0.3
     container_name: qbittorrent
     restart: unless-stopped
     network_mode: "service:gluetun"
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/London
-      - WEBUI_PORT=8085
+      - UMASK=002
+      - TZ=${TZ}
+      - WEBUI_PORTS="8085/tcp,8085/udp"
     volumes:
       - /mnt/zfs/appdata/qbittorrent:/config
-      - /mnt/zfs/datarr/torrents:/downloads
+      - /mnt/zfs/data/torrents:/data
     depends_on:
       - gluetun
 
-  jackett:
-    image: lscr.io/linuxserver/jackett:latest
-    container_name: jackett
+  overseerr:
+    image: ghcr.io/hotio/overseerr:release-1.33.2
+    container_name: overseerr
     restart: unless-stopped
     network_mode: "service:gluetun"
     environment:
       - PUID=1000
       - PGID=1000
+      - UMASK=002
       - TZ=${TZ}
-      - AUTO_UPDATE=true #optional
     volumes:
-      - /mnt/zfs/appdata/jackett:/config
-      - /mnt/zfs/datarr/blackhole:/downloads
+      - /mnt/zfs/appdata/overseerr:/config
+    depends_on:
+      - gluetun
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:latest
+    image: ghcr.io/hotio/prowlarr:release-1.30.2.4939
     container_name: prowlarr
     restart: unless-stopped
     network_mode: "service:gluetun"
@@ -68,3 +73,53 @@ services:
       - TZ=${TZ}
     volumes:
       - /mnt/zfs/appdata/prowlarr:/config
+    depends_on:
+      - gluetun
+
+  bazarr:
+    container_name: bazarr
+    image: ghcr.io/hotio/bazarr:release-1.33.2
+    network_mode: "service:gluetun"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=${TZ}
+      - WEBUI_PORTS=6767/tcp,6767/udp
+    volumes:
+      - /mnt/zfs/appdata/bazarr:/config
+      - /mnt/zfs/data/media/subtitles:/data
+    depends_on:
+      - gluetun
+
+  lidarr:
+    image: ghcr.io/hotio/lidarr:release-1.33.2
+    container_name: lidarr
+    restart: unless-stopped
+    network_mode: "service:gluetun"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=${TZ}
+    volumes:
+      - /mnt/zfs/appdata/lidarr:/config
+      - /mnt/zfs/data/media/music:/data
+    depends_on:
+      - gluetun
+
+  readarr:
+    image: ghcr.io/hotio/readarr:readarr-1.33.2
+    container_name: readarr
+    restart: unless-stopped
+    network_mode: "service:gluetun"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=${TZ}
+    volumes:
+      - /mnt/zfs/appdata/readarr:/config
+      - /mnt/zfs/data/media/books:/data
+    depends_on:
+      - gluetun
