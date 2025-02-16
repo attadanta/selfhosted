@@ -54,7 +54,7 @@ services:
       - PORT=5005
       - TZ=${TZ}
     volumes:
-      - /mnt/zfs/appdata/overseerr:/config
+      - /mnt/zfs/appdata/overseerr:/app/config
 
   prowlarr:
     image: ghcr.io/hotio/prowlarr:latest
