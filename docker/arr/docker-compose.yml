@@ -46,14 +46,12 @@ services:
       - /mnt/zfs/data:/data
 
   overseerr:
-    image: ghcr.io/hotio/overseerr:latest
+    image: sctx/overseerr:latest
     container_name: overseerr
     restart: unless-stopped
     network_mode: "service:gluetun"
     environment:
-      - PUID=1000
-      - PGID=100
-      - UMASK=002
+      - PORT=5005
       - TZ=${TZ}
     volumes:
       - /mnt/zfs/appdata/overseerr:/config
