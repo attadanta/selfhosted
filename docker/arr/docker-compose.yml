@@ -12,7 +12,6 @@ services:
       - 6881:6881
       - 6881:6881/udp
       - 8085:8085 # qbittorrent
-      - 5005:5005 # Overseerr
       - 9696:9696 # Prowlarr
       - 8686:8686 # Lidarr
       - 8787:8787 # Readarr
