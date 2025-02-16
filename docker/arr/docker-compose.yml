@@ -48,6 +48,8 @@ services:
     image: sctx/overseerr:latest
     container_name: overseerr
     restart: unless-stopped
+    ports:
+      - 5005:5055
     environment:
       - PORT=5005
       - TZ=${TZ}
