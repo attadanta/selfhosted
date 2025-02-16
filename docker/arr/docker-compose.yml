@@ -49,7 +49,7 @@ services:
     container_name: overseerr
     restart: unless-stopped
     ports:
-      - 5005:5055
+      - 5005:5005
     environment:
       - PORT=5005
       - TZ=${TZ}
