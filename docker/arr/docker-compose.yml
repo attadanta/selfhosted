@@ -49,7 +49,6 @@ services:
     image: sctx/overseerr:latest
     container_name: overseerr
     restart: unless-stopped
-    network_mode: "service:gluetun"
     environment:
       - PORT=5005
       - TZ=${TZ}
