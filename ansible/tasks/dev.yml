@@ -1,21 +1,24 @@
-- name: Update package list
+- name: Install GPG
   tags:
     - essential
-  apt:
-    update_cache: yes
-    upgrade: yes
+  package:
+    name:
+      - gpg
+    state: latest
 
-- name: Add the docker repository
+- name: Add Docker GPG apt Key
   tags:
     - essential
-  ansible.builtin.shell: |
-    install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-    chmod a+r /etc/apt/keyrings/docker.asc
-    echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-      tee /etc/apt/sources.list.d/docker.list > /dev/null
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker Repository
+  tags:
+    - essential
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu noble stable
+    state: present
 
 - name: Install system packages
   tags:
@@ -46,7 +49,7 @@
       - ripgrep
       - fzf
       - jq
-      - docker
+      - docker-ce
     state: latest
 
 - name: Disable SSH password auth
@@ -121,7 +124,6 @@
   become: true
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
-  become_flags: '-i'
 
 - name: Clone neovim
   tags:
@@ -129,35 +131,28 @@
   ansible.builtin.git:
     repo: 'https://github.com/neovim/neovim.git'
     dest: /home/{{ username }}/source/neovim
+    single_branch: yes
+    version: v0.10.4
   become: true
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
-  become_flags: '-i'
 
 - name: Build neovim
   tags:
     - personal
-  ansible.builtin.shell: |
-    git checkout stable
-    make CMAKE_BUILD_TYPE=Release
-  args:
+  make:
     chdir: /home/{{ username }}/source/neovim
+    params:
+      CMAKE_BUILD_TYPE: "Release"
   become: true
-  become_method: ansible.builtin.sudo
-  become_user: "{{ username }}"
-  become_flags: '-i'
 
 - name: Install neovim
   tags:
     - personal
-  ansible.builtin.shell: |
-    sudo make install
-  args:
+  make:
     chdir: /home/{{ username }}/source/neovim
+    target: install
   become: true
-  become_method: ansible.builtin.sudo
-  become_user: "{{ username }}"
-  become_flags: '-i'
 
 - name: Install pyenv
   tags:
@@ -183,8 +178,10 @@
   tags:
     - personal
   ansible.builtin.shell: |
-    source .zshrc
-    fnm install --lts
+    source .zshrc && fnm install --lts
+  args:
+    chdir: /home/{{ username }}
+    executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
   become: true
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
