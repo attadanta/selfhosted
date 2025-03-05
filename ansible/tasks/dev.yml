@@ -1,44 +1,12 @@
-- name: Install GPG
-  tags:
-    - essential
-  package:
-    name:
-      - gpg
-    state: latest
-
-- name: Add Docker GPG apt Key
-  tags:
-    - essential
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    state: present
-
-- name: Add Docker Repository
-  tags:
-    - essential
-  apt_repository:
-    repo: deb https://download.docker.com/linux/ubuntu noble stable
-    state: present
-
-- name: Install system packages
+- name: Install essential packages
   tags:
     - essential
   package:
     name:
       - sudo
-      - build-essential
-      - gcc
-      - ninja-build
-      - gettext
-      - cmake
-      - zlib1g
-      - zlib1g-dev
-      - libssl-dev
-      - libbz2-dev
-      - libsqlite3-dev
+      - gpg
       - unzip
       - ca-certificates
-      - curl
       - git
       - vim
       - neofetch
@@ -49,13 +17,34 @@
       - ripgrep
       - fzf
       - jq
+    state: latest
+
+- name: Add Docker GPG apt Key
+  tags:
+    - essential
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add docker Repository
+  tags:
+    - essential
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu noble stable
+    state: present
+
+- name: Install docker
+  tags:
+    - essential
+  package:
+    name:
       - docker-ce
     state: latest
 
 - name: Disable SSH password auth
   tags:
     - essential
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/ssh/sshd_config
     regexp: "^#PasswordAuthentication yes"
     line: "PasswordAuthentication no"
@@ -75,26 +64,6 @@
     - essential
   ansible.builtin.shell: |
     chsh -s $(which zsh) {{ username }}
-
-- name: Insall ohmyzsh
-  tags:
-    - personal
-  ansible.builtin.shell: |
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    mv ~/.zshrc ~/.zshrc.orig
-  become: true
-  become_method: ansible.builtin.sudo
-  become_user: "{{ username }}"
-  become_flags: '-i'
-
-- name: Install zsh-autosuggestions
-  ansible.builtin.git:
-    repo: 'https://github.com/zsh-users/zsh-autosuggestions.git'
-    dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-  become: true
-  become_method: ansible.builtin.sudo
-  become_user: "{{ username }}"
-  become_flags: '-i'
 
 - name: Create the source directory
   tags:
@@ -124,6 +93,18 @@
   become: true
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
+
+- name: Install neovim build dependencies
+  tags:
+    - essential
+  package:
+    name:
+      - build-essential
+      - cmake
+      - curl
+      - gettext
+      - ninja-build
+    state: latest
 
 - name: Clone neovim
   tags:
@@ -164,6 +145,40 @@
   become_user: "{{ username }}"
   become_flags: '-i'
 
+- name: Setup pyenv
+  tags:
+    - personal
+  ansible.builtin.shell: |
+    echo '' >> ~/.zshrc
+    echo '# pyenv' >> ~/.zshrc
+    echo '' >> ~/.zshrc
+    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
+    echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
+    echo 'eval "$(pyenv init - zsh)"' >> ~/.zshrc
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+
+- name: Install pyenv build dependencies
+  tags:
+    - essential
+  package:
+    name:
+      - build-essential
+      - libssl-dev
+      - zlib1g-dev
+      - libbz2-dev
+      - libreadline-dev
+      - libsqlite3-dev
+      - libncursesw5-dev
+      - xz-utils
+      - tk-dev
+      - libxml2-dev
+      - libxmlsec1-dev
+      - libffi-dev
+      - liblzma-dev
+
 - name: Install fnm
   tags:
     - personal
@@ -179,6 +194,19 @@
     - personal
   ansible.builtin.shell: |
     source .zshrc && fnm install --lts
+  args:
+    chdir: /home/{{ username }}
+    executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+
+- name: Install python
+  tags:
+    - personal
+  ansible.builtin.shell: |
+    source .zshrc && pyenv install 3.13.2
   args:
     chdir: /home/{{ username }}
     executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
