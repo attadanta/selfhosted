@@ -87,7 +87,7 @@
 
 - name: Stow dotfiles
   ansible.builtin.shell: |
-    stow --adopt .
+    stow *
   args:
     chdir: /home/{{ username }}/.dotfiles
   become: true
@@ -135,26 +135,24 @@
     target: install
   become: true
 
-- name: Install pyenv
+- name: Install fnm
   tags:
     - personal
   ansible.builtin.shell: |
-    curl https://pyenv.run | bash
+    curl -fsSL https://fnm.vercel.app/install | bash
   become: true
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
 
-- name: Setup pyenv
+- name: Install node
   tags:
     - personal
   ansible.builtin.shell: |
-    echo '' >> ~/.zshrc
-    echo '# pyenv' >> ~/.zshrc
-    echo '' >> ~/.zshrc
-    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
-    echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
-    echo 'eval "$(pyenv init - zsh)"' >> ~/.zshrc
+    source .zshrc && fnm install --lts
+  args:
+    chdir: /home/{{ username }}
+    executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
   become: true
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
@@ -179,24 +177,26 @@
       - libffi-dev
       - liblzma-dev
 
-- name: Install fnm
+- name: Install pyenv
   tags:
     - personal
   ansible.builtin.shell: |
-    curl -fsSL https://fnm.vercel.app/install | bash
+    curl https://pyenv.run | bash
   become: true
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
 
-- name: Install node
+- name: Setup pyenv
   tags:
     - personal
   ansible.builtin.shell: |
-    source .zshrc && fnm install --lts
-  args:
-    chdir: /home/{{ username }}
-    executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
+    echo '' >> ~/.zshrc
+    echo '# pyenv' >> ~/.zshrc
+    echo '' >> ~/.zshrc
+    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
+    echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
+    echo 'eval "$(pyenv init - zsh)"' >> ~/.zshrc
   become: true
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
