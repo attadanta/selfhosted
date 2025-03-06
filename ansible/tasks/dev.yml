@@ -30,7 +30,7 @@
   tags:
     - essential
   apt_repository:
-    repo: deb https://download.docker.com/linux/ubuntu noble stable
+    repo: "deb https://download.docker.com/linux/ubuntu {{ lookup('ansible.builtin.pipe', 'cat /etc/os-release | grep VERSION_CODENAME | cut -c18-') }} stable"
     state: present
 
 - name: Install docker
@@ -87,7 +87,7 @@
 
 - name: Stow dotfiles
   ansible.builtin.shell: |
-    stow *
+    stow $(ls -d */)
   args:
     chdir: /home/{{ username }}/.dotfiles
   become: true
