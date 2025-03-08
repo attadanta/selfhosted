@@ -59,7 +59,7 @@ jobs:
       - name: Build and push ready image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ansible
           push: ${{ github.event_name != 'pull_request' }}
           target: run
           tags: ghcr.io/${{ github.repository }}-ansible:devnode
