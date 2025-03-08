@@ -76,6 +76,16 @@
   become_user: "{{ username }}"
   become_flags: '-i'
 
+- name: Clone the tmux plugin manager
+  tags:
+    - personal
+  ansible.builtin.git:
+    repo: 'https://github.com/tmux-plugins/tpm'
+    dest: ~/.tmux/plugins/tpm
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+
 - name: Clone dotfiles
   ansible.builtin.git:
     repo: 'https://github.com/attadanta/dotfiles.git'
@@ -86,6 +96,8 @@
   become_flags: '-i'
 
 - name: Stow dotfiles
+  tags:
+    - personal
   ansible.builtin.shell: |
     stow $(ls -d */)
   args:
@@ -96,7 +108,7 @@
 
 - name: Install neovim build dependencies
   tags:
-    - essential
+    - personal
   package:
     name:
       - build-essential
@@ -149,7 +161,20 @@
   tags:
     - personal
   ansible.builtin.shell: |
-    source .zshrc && fnm install --lts
+    source .zshrc && fnm install {{ node_version }}
+  args:
+    chdir: /home/{{ username }}
+    executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+
+- name: Set default node version
+  tags:
+    - personal
+  ansible.builtin.shell: |
+    source .zshrc && fnm default {{ node_version }}
   args:
     chdir: /home/{{ username }}
     executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
@@ -206,7 +231,20 @@
   tags:
     - personal
   ansible.builtin.shell: |
-    source .zshrc && pyenv install 3.13.2
+    source .zshrc && pyenv install {{ python_version }}
+  args:
+    chdir: /home/{{ username }}
+    executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+
+- name: Set default python version
+  tags:
+    - personal
+  ansible.builtin.shell: |
+    source .zshrc && pyenv global {{ python_version }}
   args:
     chdir: /home/{{ username }}
     executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
