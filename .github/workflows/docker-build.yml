@@ -50,17 +50,17 @@ jobs:
           context: ansible
           push: ${{ github.event_name != 'pull_request' }}
           target: build
-          tags: ghcr.io/${{ github.repository }}-ansible:init
+          tags: ghcr.io/${{ github.repository }}-ansible:devnode-init
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Run ansible playbook
-        run: docker run --rm ghcr.io/${{ github.repository }}-ansible:init /bin/bash -c "ansible-playbook -vvv -i hosts --limit localhost site.yml"
+        run: docker run --rm ghcr.io/${{ github.repository }}-ansible:devnode-init /bin/bash -c "ansible-playbook -vvv -i hosts --limit localhost site.yml"
 
       - name: Build and push ready image
         uses: docker/build-push-action@v5
         with:
-          context: ansible
+          context: .
           push: ${{ github.event_name != 'pull_request' }}
           target: run
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ghcr.io/${{ github.repository }}-ansible:devnode
           labels: ${{ steps.meta.outputs.labels }}
