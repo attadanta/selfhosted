@@ -1,5 +1,5 @@
 username: scrbl
 node_version: 22.14.0
 java_version: 11
-python_version: 3.9.5
+python_version: 3.12.2
 go_version: 1.16.5
