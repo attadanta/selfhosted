@@ -95,17 +95,6 @@
   become_user: "{{ username }}"
   become_flags: '-i'
 
-- name: Stow dotfiles
-  tags:
-    - personal
-  ansible.builtin.shell: |
-    stow $(ls -d */)
-  args:
-    chdir: /home/{{ username }}/.dotfiles
-  become: true
-  become_method: ansible.builtin.sudo
-  become_user: "{{ username }}"
-
 - name: Install neovim build dependencies
   tags:
     - personal
@@ -261,3 +250,14 @@
     sudo tar -C /usr/local -xzf go{{ go_version }}.linux-amd64.tar.gz
     rm go{{ go_version }}.linux-amd64.tar.gz
   become: true
+
+- name: Stow dotfiles
+  tags:
+    - personal
+  ansible.builtin.shell: |
+    stow $(ls -d */)
+  args:
+    chdir: /home/{{ username }}/.dotfiles
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
