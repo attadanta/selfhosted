@@ -95,6 +95,18 @@
   become_user: "{{ username }}"
   become_flags: '-i'
 
+- name: Stow dotfiles
+  tags:
+    - personal
+  ansible.builtin.shell: |
+    stow $(ls -d */)
+  args:
+    chdir: /home/{{ username }}/.dotfiles
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+
+
 - name: Install neovim build dependencies
   tags:
     - personal
@@ -114,7 +126,7 @@
     repo: 'https://github.com/neovim/neovim.git'
     dest: /home/{{ username }}/source/neovim
     single_branch: yes
-    version: v0.10.4
+    version: "{{ neovim_version_tag }}"
   become: true
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
@@ -255,19 +267,9 @@
   tags:
     - personal
   ansible.builtin.shell: |
-    curl -sS https://starship.rs/install.sh | sh
+    curl -sS https://starship.rs/install.sh | sh -s -- --yes
   become: true
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
 
-- name: Stow dotfiles
-  tags:
-    - personal
-  ansible.builtin.shell: |
-    stow $(ls -d */)
-  args:
-    chdir: /home/{{ username }}/.dotfiles
-  become: true
-  become_method: ansible.builtin.sudo
-  become_user: "{{ username }}"
