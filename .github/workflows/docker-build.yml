@@ -3,8 +3,12 @@ name: Build and Publish Docker Image
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'ansible/**'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'ansible/**'
 
 jobs:
   build:
@@ -12,6 +16,9 @@ jobs:
     permissions:
       contents: read
       packages: write
+    defaults:
+      run:
+        working-directory: ansible
 
     steps:
       - name: Checkout repository
@@ -31,7 +38,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ghcr.io/${{ github.repository }}-ansible
           tags: |
             type=sha,format=short
             type=ref,event=branch
@@ -40,19 +47,19 @@ jobs:
       - name: Build initiation image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ansible
           push: ${{ github.event_name != 'pull_request' }}
           target: build
-          tags: ghcr.io/${{ github.repository }}:init
+          tags: ghcr.io/${{ github.repository }}-ansible:init
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Run ansible playbook
-        run: docker run --rm ghcr.io/${{ github.repository }}:init /bin/bash -c "ansible-playbook -vvv -i hosts --limit localhost site.yml"
+        run: docker run --rm ghcr.io/${{ github.repository }}-ansible:init /bin/bash -c "ansible-playbook -vvv -i hosts --limit localhost site.yml"
 
       - name: Build and push ready image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ansible
           push: ${{ github.event_name != 'pull_request' }}
           target: run
           tags: ${{ steps.meta.outputs.tags }}
