@@ -106,7 +106,6 @@
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
 
-
 - name: Install neovim build dependencies
   tags:
     - personal
