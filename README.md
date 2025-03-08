@@ -17,7 +17,7 @@ containers running in host mode and virtual machines. Notable among them are:
 * the internet router on 192.168.0.1.
 * a pihole container on 192.168.0.2 running a DHCP server (the router is lame
   and does not allow you to point to a custom DNS server).
-* the Unraid box on 192.168.0.1.
+* the Unraid box on 192.168.0.3.
 * the rest of the home devices run on 192.168.0.[17-255] and are configured by
   the pihole.
 
