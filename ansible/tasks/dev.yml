@@ -118,7 +118,7 @@
       - ninja-build
     state: latest
 
-- name: Clone neovim
+- name: Clone neovim {{ neovim_version_tag }}
   tags:
     - personal
   ansible.builtin.git:
@@ -130,7 +130,7 @@
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
 
-- name: Build neovim
+- name: Build neovim {{ neovim_version_tag }}
   tags:
     - personal
   make:
@@ -157,7 +157,7 @@
   become_user: "{{ username }}"
   become_flags: '-i'
 
-- name: Install node
+- name: Install node {{ node_version }}
   tags:
     - personal
   ansible.builtin.shell: |
@@ -170,7 +170,7 @@
   become_user: "{{ username }}"
   become_flags: '-i'
 
-- name: Set default node version
+- name: Set default node version to {{ node_version }}
   tags:
     - personal
   ansible.builtin.shell: |
@@ -227,7 +227,7 @@
   become_user: "{{ username }}"
   become_flags: '-i'
 
-- name: Install python
+- name: Install python {{ python_version }}
   tags:
     - personal
   ansible.builtin.shell: |
@@ -240,7 +240,7 @@
   become_user: "{{ username }}"
   become_flags: '-i'
 
-- name: Set default python version
+- name: Set default python version {{ python_version }}
   tags:
     - personal
   ansible.builtin.shell: |
@@ -253,7 +253,7 @@
   become_user: "{{ username }}"
   become_flags: '-i'
 
-- name: Install go
+- name: Install go {{ go_version }}
   tags:
     - personal
   ansible.builtin.shell: |
