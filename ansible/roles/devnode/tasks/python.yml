@@ -1,6 +1,4 @@
 - name: Install pyenv build dependencies
-  tags:
-    - essential
   package:
     name:
       - build-essential
@@ -18,8 +16,6 @@
       - liblzma-dev
 
 - name: Install pyenv
-  tags:
-    - personal
   ansible.builtin.shell: |
     curl https://pyenv.run | bash
   become: true
@@ -43,8 +39,6 @@
   become_flags: '-i'
 
 - name: Install python {{ python_version }}
-  tags:
-    - personal
   ansible.builtin.shell: |
     source .zshrc && pyenv install {{ python_version }}
   args:
@@ -56,8 +50,6 @@
   become_flags: '-i'
 
 - name: Set default python version {{ python_version }}
-  tags:
-    - personal
   ansible.builtin.shell: |
     source .zshrc && pyenv global {{ python_version }}
   args:

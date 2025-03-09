@@ -10,23 +10,17 @@
       }}
 
 - name: Download fzf {{ fzf_version }}
-  tags:
-    - essential
   ansible.builtin.get_url:
     url: "https://github.com/junegunn/fzf/releases/download/v{{ fzf_version }}/fzf-{{ fzf_version }}-{{ fzf_release_suffix }}.tar.gz"
     dest: /tmp/fzf-{{ fzf_version }}-{{ fzf_release_suffix }}.tar.gz.tar.gz
   register: fzf_archive
 
 - name: Install fzf {{ fzf_version }}
-  tags:
-    - essential
   ansible.builtin.unarchive:
     src: "{{ fzf_archive.dest }}"
     dest: /usr/local/bin
 
 - name: Remove fzf download
-  tags:
-    - essential
   ansible.builtin.file:
     path: "{{ fzf_archive.dest }}"
     state: absent
