@@ -3,19 +3,20 @@
   set_fact:
     starship_release_suffix: "{{ ansible_architecture }}-unknown-linux-musl"
 
-- name: Download starship {{ starship_version }}
-  ansible.builtin.get_url:
-    url: "https://github.com/starship/starship/releases/download/v{{ starship_version}}/starship-{{ starship_release_suffix }}.tar.gz"
-    dest: /tmp/starship-{{ starship_release_suffix }}.tar.gz
-  register: starship_archive
+- name: Setup starship
+  block:
+  - name: Download starship {{ starship_version }}
+    ansible.builtin.get_url:
+      url: "https://github.com/starship/starship/releases/download/v{{ starship_version}}/starship-{{ starship_release_suffix }}.tar.gz"
+      dest: /tmp/starship-{{ starship_release_suffix }}.tar.gz
+    register: starship_archive
 
-- name: Install starship {{ starship_version }}
-  ansible.builtin.unarchive:
-    src: "{{ starship_archive.dest }}"
-    dest: /usr/local/bin
-
-- name: Remove starship download
-  ansible.builtin.file:
-    path: "{{ starship_archive.dest }}"
-    state: absent
-
+  - name: Install starship {{ starship_version }}
+    ansible.builtin.unarchive:
+      src: "{{ starship_archive.dest }}"
+      dest: /usr/local/bin
+  always:
+    - name: Remove starship download
+      ansible.builtin.file:
+        path: "{{ starship_archive.dest }}"
+        state: absent
