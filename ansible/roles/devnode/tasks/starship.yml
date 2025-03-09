@@ -1,4 +1,4 @@
-# See 
+# See https://github.com/starship/starship/releases
 - name: Determine starship release suffix
   set_fact:
     starship_release_suffix: "{{ ansible_architecture }}-unknown-linux-musl"
