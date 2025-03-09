@@ -24,4 +24,3 @@
         path: "{{ go_download.dest }}"
         state: absent
 
-
