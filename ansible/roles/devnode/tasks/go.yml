@@ -1,8 +1,27 @@
-- name: Install go {{ go_version }}
-  tags:
-    - personal
-  ansible.builtin.shell: |
-    curl -fsSL https://golang.org/dl/go{{ go_version }}.linux-amd64.tar.gz -o go{{ go_version }}.linux-amd64.tar.gz
-    sudo tar -C /usr/local -xzf go{{ go_version }}.linux-amd64.tar.gz
-    rm go{{ go_version }}.linux-amd64.tar.gz
-  become: true
+# See https://go.dev/dl/
+- name: Determine go release suffix
+  set_fact:
+    go_release_suffix: >-
+      {{
+      {
+        'aarch64': 'linux-arm64'
+      }.get(ansible_architecture, 'linux-amd64')
+      }}
+- name: Set up go {{ go_version }}
+  block:
+    - name: Download go {{ go_version }}
+      ansible.builtin.get_url:
+        url: "https://golang.org/dl/go{{ go_version }}.{{ go_release_suffix }}.tar.gz"
+        dest: /tmp/go{{ go_version }}.{{ go_release_suffix }}.tar.gz
+      register: go_download
+    - name: Install go {{ go_version }}
+      ansible.builtin.unarchive:
+        src: "{{ go_download.dest }}"
+        dest: /usr/local
+  always:
+    - name: Remove go download
+      ansible.builtin.file:
+        path: "{{ go_download.dest }}"
+        state: absent
+
+
