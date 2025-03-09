@@ -6,6 +6,8 @@
       - sudo
       - gpg
       - unzip
+      - tar
+      - curl
       - ca-certificates
       - git
       - vim
@@ -15,7 +17,6 @@
       - stow
       - zsh
       - ripgrep
-      - fzf
       - jq
     state: latest
 
@@ -40,6 +41,69 @@
     name:
       - docker-ce
     state: latest
+
+- name: Install go {{ go_version }}
+  tags:
+    - personal
+  ansible.builtin.shell: |
+    curl -fsSL https://golang.org/dl/go{{ go_version }}.linux-amd64.tar.gz -o go{{ go_version }}.linux-amd64.tar.gz
+    sudo tar -C /usr/local -xzf go{{ go_version }}.linux-amd64.tar.gz
+    rm go{{ go_version }}.linux-amd64.tar.gz
+  become: true
+
+- name: Determine FZF release suffix
+  set_fact:
+    fzf_release_suffix: >-
+      {{ ansible_system|lower }}_{{
+         'arm64' if ansible_architecture == 'aarch64' else ansible_architecture }}
+
+- name: Download fzf {{ fzf_version }}
+  tags:
+    - essential
+  ansible.builtin.get_url:
+    url: "https://github.com/junegunn/fzf/releases/download/v{{ fzf_version }}/fzf-{{ fzf_version }}-{{ fzf_release_suffix }}.tar.gz"
+    dest: /tmp/fzf-{{ fzf_version }}-{{ fzf_release_suffix }}.tar.gz.tar.gz
+  register: fzf_archive
+
+- name: Install fzf {{ fzf_version }}
+  tags:
+    - essential
+  ansible.builtin.unarchive:
+    src: "{{ fzf_archive.dest }}"
+    dest: /usr/local/bin
+
+- name: Remove fzf download
+  tags:
+    - essential
+  ansible.builtin.file:
+    path: "{{ fzf_archive.dest }}"
+    state: absent
+
+- name: Determine starship release suffix
+  set_fact:
+    starship_release_suffix: "{{ ansible_architecture }}-unknown-linux-musl"
+
+- name: Download starship {{ starship_version }}
+  tags:
+    - essential
+  ansible.builtin.get_url:
+    url: "https://github.com/starship/starship/releases/download/v{{ starship_version}}/starship-{{ starship_release_suffix }}.tar.gz"
+    dest: /tmp/starship-{{ starship_release_suffix }}.tar.gz
+  register: starship_archive
+
+- name: Install starship {{ starship_version }}
+  tags:
+    - essential
+  ansible.builtin.unarchive:
+    src: "{{ starship_archive.dest }}"
+    dest: /usr/local/bin
+
+- name: Remove starship download
+  tags:
+    - essential
+  ansible.builtin.file:
+    path: "{{ starship_archive.dest }}"
+    state: absent
 
 - name: Disable SSH password auth
   tags:
@@ -76,16 +140,6 @@
   become_user: "{{ username }}"
   become_flags: '-i'
 
-- name: Clone the tmux plugin manager
-  tags:
-    - personal
-  ansible.builtin.git:
-    repo: 'https://github.com/tmux-plugins/tpm'
-    dest: ~/.tmux/plugins/tpm
-  become: true
-  become_method: ansible.builtin.sudo
-  become_user: "{{ username }}"
-
 - name: Clone dotfiles
   ansible.builtin.git:
     repo: 'https://github.com/attadanta/dotfiles.git'
@@ -106,6 +160,17 @@
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
 
+- name: Clone the tmux plugin manager
+  tags:
+    - personal
+  ansible.builtin.git:
+    repo: 'https://github.com/tmux-plugins/tpm'
+    dest: ~/.tmux/plugins/tpm
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+
 - name: Install neovim build dependencies
   tags:
     - personal
@@ -113,24 +178,23 @@
     name:
       - build-essential
       - cmake
-      - curl
       - gettext
       - ninja-build
     state: latest
 
-- name: Clone neovim {{ neovim_version_tag }}
+- name: Clone neovim {{ neovim_version }}
   tags:
     - personal
   ansible.builtin.git:
     repo: 'https://github.com/neovim/neovim.git'
     dest: /home/{{ username }}/source/neovim
     single_branch: yes
-    version: "{{ neovim_version_tag }}"
+    version: "v{{ neovim_version }}"
   become: true
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
 
-- name: Build neovim {{ neovim_version_tag }}
+- name: Build neovim {{ neovim_version }}
   tags:
     - personal
   make:
@@ -252,15 +316,6 @@
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
-
-- name: Install go {{ go_version }}
-  tags:
-    - personal
-  ansible.builtin.shell: |
-    curl -fsSL https://golang.org/dl/go{{ go_version }}.linux-amd64.tar.gz -o go{{ go_version }}.linux-amd64.tar.gz
-    sudo tar -C /usr/local -xzf go{{ go_version }}.linux-amd64.tar.gz
-    rm go{{ go_version }}.linux-amd64.tar.gz
-  become: true
 
 - name: Install starship
   tags:
