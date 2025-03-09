@@ -1,0 +1,20 @@
+- name: Clone dotfiles
+  ansible.builtin.git:
+    repo: 'https://github.com/attadanta/dotfiles.git'
+    dest: ~/.dotfiles
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+
+- name: Stow dotfiles
+  tags:
+    - personal
+  ansible.builtin.shell: |
+    stow $(ls -d */)
+  args:
+    chdir: /home/{{ username }}/.dotfiles
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+

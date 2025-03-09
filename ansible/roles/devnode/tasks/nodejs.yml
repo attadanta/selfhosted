@@ -1,0 +1,29 @@
+- name: Install fnm
+  ansible.builtin.shell: |
+    curl -fsSL https://fnm.vercel.app/install | bash
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+
+- name: Install node {{ node_version }}
+  ansible.builtin.shell: |
+    source .zshrc && fnm install {{ node_version }}
+  args:
+    chdir: /home/{{ username }}
+    executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+
+- name: Set default node version to {{ node_version }}
+  ansible.builtin.shell: |
+    source .zshrc && fnm default {{ node_version }}
+  args:
+    chdir: /home/{{ username }}
+    executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'

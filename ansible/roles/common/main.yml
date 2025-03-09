@@ -1,0 +1,30 @@
+- name: Enable passwordless sudo for "{{ username }}"
+  lineinfile:
+    dest: /etc/sudoers
+    regexp: "^%wheel"
+    line: "{{ username }} ALL=(ALL) NOPASSWD: ALL"
+    validate: "/usr/sbin/visudo -cf %s"
+
+- name: Install essential packages
+  package:
+    name:
+      - sudo
+      - gpg
+      - unzip
+      - tar
+      - curl
+      - ca-certificates
+      - git
+      - vim
+      - neofetch
+      - htop
+      - tmux
+      - stow
+      - zsh
+      - ripgrep
+      - jq
+    state: latest
+
+- name: Change shell to zsh
+  ansible.builtin.shell: |
+    chsh -s $(which zsh) {{ username }}

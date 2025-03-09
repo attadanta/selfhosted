@@ -1,0 +1,33 @@
+---
+- name: Create the source directory
+  ansible.builtin.file:
+    path: /home/{{ username }}/source
+    state: directory
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+
+- name: Install docker
+  import_tasks: docker.yml
+
+- name: Install go {{ go_version }}
+  import_tasks: go.yml
+
+- name: Install fzf {{ fzf_version }}
+  import_tasks: fzf.yml
+
+- name: Install starhip {{ starship_version }}
+  import_tasks: starship.yml
+
+- name: Set up dotfiles
+  import_tasks: dotfiles.yml
+
+- name: Install neovim {{ neovim_version }}
+  import_tasks: neovim.yml
+
+- name: Install node {{ node_version }}
+  import_tasks: nodejs.yml
+
+- name: Install python {{ python_version }}
+  import_tasks: python.yml

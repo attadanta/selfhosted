@@ -320,14 +320,3 @@
   become_method: ansible.builtin.sudo
   become_user: "{{ username }}"
   become_flags: '-i'
-
-- name: Install starship
-  tags:
-    - personal
-  ansible.builtin.shell: |
-    curl -sS https://starship.rs/install.sh | sh -s -- --yes
-  become: true
-  become_method: ansible.builtin.sudo
-  become_user: "{{ username }}"
-  become_flags: '-i'
-

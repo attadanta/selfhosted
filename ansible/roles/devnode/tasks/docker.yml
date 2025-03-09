@@ -1,0 +1,16 @@
+---
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add docker Repository
+  apt_repository:
+    repo: "deb https://download.docker.com/linux/ubuntu {{ lookup('ansible.builtin.pipe', 'cat /etc/os-release | grep VERSION_CODENAME | cut -c18-') }} stable"
+    state: present
+
+- name: Install docker
+  package:
+    name:
+      - docker-ce
+    state: latest
