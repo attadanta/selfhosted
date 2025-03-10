@@ -8,6 +8,15 @@
   become_user: "{{ username }}"
   become_flags: '-i'
 
+- name: Create the .local/bin directory
+  ansible.builtin.file:
+    path: /home/{{ username }}/.local/bin
+    state: directory
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+
 - name: Install docker
   import_tasks: docker.yml
 
@@ -25,6 +34,9 @@
 
 - name: Install neovim {{ neovim_version }}
   import_tasks: neovim.yml
+
+- name: Install deno {{ deno_version }}
+  import_tasks: deno.yml
 
 - name: Install node {{ node_version }}
   import_tasks: nodejs.yml

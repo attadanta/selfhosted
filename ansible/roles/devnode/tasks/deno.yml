@@ -1,0 +1,26 @@
+---
+- name: Determine deno release suffix
+  set_fact:
+    deno_release_suffix: >-
+      {{
+      {
+        'aarch64': 'aarch64-unknown-linux-gnu',
+      }.get(ansible_architecture, 'x86_64-unknown-linux-gnu')
+      }}
+- name: Setup deno {{ deno_version }}
+  block:
+    - name: Download deno {{ deno_version }}
+      ansible.builtin.get_url:
+        url: "https://github.com/denoland/deno/releases/download/v{{ deno_version }}/deno-{{ deno_release_suffix }}.zip"
+        dest: /tmp/deno-{{ deno_release_suffix }}.zip
+      register: deno_download
+    - name: Install deno {{ deno_version }}
+      ansible.builtin.unarchive:
+        src: "{{ deno_download.dest }}"
+        dest: /home/{{ username }}/.local/bin
+  always:
+    - name: Remove deno download
+      ansible.builtin.file:
+        path: "{{ deno_download.dest }}"
+        state: absent
+
