@@ -22,7 +22,7 @@
       ansible.builtin.unarchive:
         src: "{{ go_download.dest }}"
         dest: /usr/local
-    - name: Set up go environment
+    - name: Set up environment with go {{ go_version }}
       block:
         - name: Add go to /etc/profile
           ansible.builtin.lineinfile:
