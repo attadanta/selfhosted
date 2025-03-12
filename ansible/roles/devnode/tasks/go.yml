@@ -28,9 +28,9 @@
           ansible.builtin.lineinfile:
             path: /etc/profile
             line: "export PATH=$PATH:/usr/local/go/bin"
-        - name: Add go to /etc/zprofile
+        - name: Add go to /etc/zsh/zprofile
           ansible.builtin.lineinfile:
-            path: /etc/zprofile
+            path: /etc/zsh/zprofile
             line: "export PATH=$PATH:/usr/local/go/bin"
   always:
     - name: Remove go download
