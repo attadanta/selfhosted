@@ -18,28 +18,28 @@
   become_flags: '-i'
 
 - name: Install docker
-  import_tasks: docker.yml
+  ansible.builtin.import_tasks: docker.yml
 
 - name: Install go {{ go_version }}
-  import_tasks: go.yml
+  ansible.builtin.import_tasks: go.yml
 
 - name: Install fzf {{ fzf_version }}
   import_tasks: fzf.yml
 
 - name: Install starhip {{ starship_version }}
-  import_tasks: starship.yml
+  ansible.builtin.import_tasks: starship.yml
 
 - name: Set up dotfiles
-  import_tasks: dotfiles.yml
+  ansible.builtin.import_tasks: dotfiles.yml
 
 - name: Install neovim {{ neovim_version }}
-  import_tasks: neovim.yml
+  ansible.builtin.import_tasks: neovim.yml
 
 - name: Install deno {{ deno_version }}
-  import_tasks: deno.yml
+  ansible.builtin.import_tasks: deno.yml
 
 - name: Install node {{ node_version }}
-  import_tasks: nodejs.yml
+  ansible.builtin.import_tasks: nodejs.yml
 
 - name: Install python {{ python_version }}
-  import_tasks: python.yml
+  ansible.builtin.import_tasks: python.yml

@@ -7,7 +7,7 @@
   block:
   - name: Download starship {{ starship_version }}
     ansible.builtin.get_url:
-      url: "https://github.com/starship/starship/releases/download/v{{ starship_version}}/starship-{{ starship_release_suffix }}.tar.gz"
+      url: "https://github.com/starship/starship/releases/download/v{{ starship_version }}/starship-{{ starship_release_suffix }}.tar.gz"
       dest: /tmp/starship-{{ starship_release_suffix }}.tar.gz
     register: starship_archive
 
