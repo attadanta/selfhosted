@@ -17,33 +17,33 @@
 
 - name: Set up python {{ python_version }}
   block:
-  - name: Install pyenv
-    ansible.builtin.shell: |
-      curl https://pyenv.run | bash
+    - name: Install pyenv
+      ansible.builtin.shell: |
+        curl https://pyenv.run | bash
 
-  - name: Set up pyenv
-    ansible.builtin.shell: |
-      echo '' >> ~/.zshrc
-      echo '# pyenv' >> ~/.zshrc
-      echo '' >> ~/.zshrc
-      echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
-      echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
-      echo 'eval "$(pyenv init - zsh)"' >> ~/.zshrc
+    - name: Set up pyenv
+      ansible.builtin.shell: |
+        echo '' >> ~/.zshrc
+        echo '# pyenv' >> ~/.zshrc
+        echo '' >> ~/.zshrc
+        echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
+        echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
+        echo 'eval "$(pyenv init - zsh)"' >> ~/.zshrc
 
-  - name: Install python {{ python_version }}
-    ansible.builtin.shell: |
-      source .zshrc && pyenv install {{ python_version }}
-    args:
-      chdir: /home/{{ username }}
-      executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
+    - name: Install python {{ python_version }}
+      ansible.builtin.shell: |
+        source .zshrc && pyenv install {{ python_version }}
+      args:
+        chdir: /home/{{ username }}
+        executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
 
-  - name: Set default python version {{ python_version }}
-    ansible.builtin.shell: |
-      source .zshrc && pyenv global {{ python_version }}
-    args:
-      chdir: /home/{{ username }}
-      executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
-  become: true
-  become_method: ansible.builtin.sudo
-  become_user: "{{ username }}"
-  become_flags: '-i'
+    - name: Set default python version {{ python_version }}
+      ansible.builtin.shell: |
+        source .zshrc && pyenv global {{ python_version }}
+      args:
+        chdir: /home/{{ username }}
+        executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
+    become: true
+    become_method: ansible.builtin.sudo
+    become_user: "{{ username }}"
+    become_flags: '-i'
