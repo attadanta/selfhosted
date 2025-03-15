@@ -1,8 +1,5 @@
 - name: Install pyenv build dependencies
   become: true
-  become_method: ansible.builtin.sudo
-  become_user: "{{ username }}"
-  become_flags: '-i'
   ansible.builtin.package:
     name:
       - build-essential
@@ -20,6 +17,10 @@
       - liblzma-dev
 
 - name: Set up python {{ python_version }}
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
   block:
     - name: Install pyenv
       ansible.builtin.shell: |

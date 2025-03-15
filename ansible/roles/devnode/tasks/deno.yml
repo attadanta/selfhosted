@@ -1,6 +1,6 @@
 ---
 - name: Determine deno release suffix
-  set_fact:
+  ansible.builtin.set_fact:
     deno_release_suffix: >-
       {{
       {
@@ -23,4 +23,3 @@
       ansible.builtin.file:
         path: "{{ deno_download.dest }}"
         state: absent
-

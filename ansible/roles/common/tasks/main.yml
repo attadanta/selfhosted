@@ -6,7 +6,7 @@
     validate: "/usr/sbin/visudo -cf %s"
 
 - name: Install essential packages
-  package:
+  ansible.builtin.package:
     name:
       - sudo
       - gpg

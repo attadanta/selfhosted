@@ -1,6 +1,6 @@
 # See https://github.com/junegunn/fzf/releases
 - name: Determine FZF release suffix
-  ansible.fact.set_fact:
+  ansible.builtin.set_fact:
     fzf_release_suffix: >-
       {{ ansible_system|lower }}_{{
       {
