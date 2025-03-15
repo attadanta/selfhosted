@@ -1,5 +1,9 @@
 - name: Install pyenv build dependencies
-  package:
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: "{{ username }}"
+  become_flags: '-i'
+  ansible.builtin.package:
     name:
       - build-essential
       - libssl-dev
@@ -43,7 +47,3 @@
       args:
         chdir: /home/{{ username }}
         executable: "{{ lookup('ansible.builtin.pipe', 'which zsh') }}"
-  become: true
-  become_method: ansible.builtin.sudo
-  become_user: "{{ username }}"
-  become_flags: '-i'

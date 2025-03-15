@@ -1,6 +1,6 @@
 # See https://github.com/junegunn/fzf/releases
 - name: Determine FZF release suffix
-  set_fact:
+  ansible.fact.set_fact:
     fzf_release_suffix: >-
       {{ ansible_system|lower }}_{{
       {
@@ -11,18 +11,17 @@
 
 - name: Set up FZF {{ fzf_version }}
   block:
-  - name: Download fzf {{ fzf_version }}
-    ansible.builtin.get_url:
-      url: "https://github.com/junegunn/fzf/releases/download/v{{ fzf_version }}/fzf-{{ fzf_version }}-{{ fzf_release_suffix }}.tar.gz"
-      dest: /tmp/fzf-{{ fzf_version }}-{{ fzf_release_suffix }}.tar.gz.tar.gz
-    register: fzf_download
-  - name: Install fzf {{ fzf_version }}
-    ansible.builtin.unarchive:
-      src: "{{ fzf_download.dest }}"
-      dest: /usr/local/bin
+    - name: Download fzf {{ fzf_version }}
+      ansible.builtin.get_url:
+        url: "https://github.com/junegunn/fzf/releases/download/v{{ fzf_version }}/fzf-{{ fzf_version }}-{{ fzf_release_suffix }}.tar.gz"
+        dest: /tmp/fzf-{{ fzf_version }}-{{ fzf_release_suffix }}.tar.gz.tar.gz
+      register: fzf_download
+    - name: Install fzf {{ fzf_version }}
+      ansible.builtin.unarchive:
+        src: "{{ fzf_download.dest }}"
+        dest: /usr/local/bin
   always:
     - name: Remove fzf download
       ansible.builtin.file:
         path: "{{ fzf_download.dest }}"
         state: absent
-

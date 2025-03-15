@@ -1,6 +1,6 @@
 # See https://go.dev/dl
 - name: Determine go release suffix
-  set_fact:
+  ansible.builtin.set_fact:
     go_release_suffix: >-
       {{
       {
@@ -33,4 +33,3 @@
       ansible.builtin.file:
         path: "{{ go_download.dest }}"
         state: absent
-
